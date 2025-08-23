@@ -13,28 +13,28 @@ strace -e write ./ex1b_write
 ### 🔍 Análise
 
 **1. Quantas syscalls write() cada programa gerou?**
-- ex1a_printf: _____ syscalls
-- ex1b_write: _____ syscalls
+- ex1a_printf: 9 syscalls
+- ex1b_write: 7 syscalls
 
 **2. Por que há diferença entre os dois métodos? Consulte o docs/printf_vs_write.md**
 
-```
-[Sua análise aqui]
-```
+A diferença acontece porque "printf()" utiliza um buffer intermediário (a "carteira") antes de enviar os dados para a saída, enquanto "write()" envia diretamente para o sistema operacional (o "banco").  
+No "printf()", as mensagens podem ser acumuladas em memória e só são enviadas em determinados momentos: quando o buffer enche, quando há um "\n", quando o programa termina ou quando chamamos "fflush()".  
+Já o "write()" realiza a chamada ao sistema operacional imediatamente, a cada execução, sem armazenar em buffer.  
+Por isso, "printf()" pode ser mais rápido, com menos chamadas de sistema, enquanto "write()" é mais direto.
+
 
 **3. Qual método é mais previsível? Por quê você acha isso?**
 
-```
-[Sua análise aqui]
-```
+Como o método "write()" tem uma interação mais direta com o sistema operacional, isso faz com que ele seja mais previsível que o método "printf()".
 
 ---
 
 ## 2️⃣ Exercício 2 - Leitura de Arquivo
 
 ### 📊 Resultados da execução:
-- File descriptor: _____
-- Bytes lidos: _____
+- File descriptor: 3
+- Bytes lidos: 127
 
 ### 🔧 Comando strace:
 ```bash
