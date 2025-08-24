@@ -102,39 +102,32 @@ Quanto menor o número de chamadas de sistema (syscalls), maior a performance. C
 ```bash
 diff dados/origem.txt dados/destino.txt
 ```
-Resultado: [ ] Idênticos [ ] Diferentes
+Resultado: [X] Idênticos [ ] Diferentes
 
 ### 🔍 Análise
 
 **1. Por que devemos verificar que bytes_escritos == bytes_lidos?**
 
-```
-[Sua análise aqui]
-```
+Verificar que bytes_escritos == bytes_lidos é importante na hora da cópia, pois, assim, garante que não houve perda da informação. Se o valor de retorno de write() for menor do que o número de bytes que se tentou escrever (bytes_lidos), isso indica que a escrita falhou parcialmente.
 
 **2. Que flags são essenciais no open() do destino?**
 
-```
-[Sua análise aqui]
-```
+Flags essenciais no open() do arquivo de destino:
+- O_WRONLY: indica que o arquivo será aberto apenas para escrita.
+- O_CREAT: cria o arquivo de destino.
+- O_TRUNC: trunca o arquivo para o tamanho zero se ele já existir, garantindo que não haja resíduos de dados de uma execução anterior.
 
 **3. O número de reads e writes é igual? Por quê?**
 
-```
-[Sua análise aqui]
-```
+Sim, o strace mostra 6 chamadas de read e 6 chamadas de write, ou seja, é igual. Isso acontece porque o programa lê um bloco de dados do arquivo de origem e, imediatamente, tenta escrever esse mesmo bloco no arquivo de destino dentro do mesmo loop.
 
 **4. Como você saberia se o disco ficou cheio?**
 
-```
-[Sua análise aqui]
-```
+O disco cheio é um erro que seria detectado pela função write(). Se o disco ficar sem espaço durante a operação, a chamada write() retornaria um valor menor que 0 e a variável errno seria definida para indicar o erro específico (exemplo: ENOSPC). A verificação bytes_escritos != bytes_lidos também pegaria essa falha.
 
 **5. O que acontece se esquecer de fechar os arquivos?**
 
-```
-[Sua análise aqui]
-```
+É possível que cause um problema chamado "vazamento de file descriptor" (file descriptor leak). Cada processo tem um número limitado de file descriptors que pode usar, se o programa não os libera, eles continuam ocupados e, com o tempo, pode eventualmente esgotar os recursos disponíveis, impedindo que o programa abra novos arquivos.
 
 ---
 
@@ -144,21 +137,15 @@ Resultado: [ ] Idênticos [ ] Diferentes
 
 **1. Como as syscalls demonstram a transição usuário → kernel?**
 
-```
-[Sua análise aqui]
-```
+Essa transição feitas pelas syscalls é demonstrado através do strace, que mostra o momento exato em que essa transição ocorre, exibindo as chamadas de sistema como read() e write(), que são os pontos de entrada para o kernel.
 
 **2. Qual é o seu entendimento sobre a importância dos file descriptors?**
 
-```
-[Sua análise aqui]
-```
+O sistema operacional usa os File descriptors para identificar recursos de I/O, atuando como um ponteiro ou identificador para um arquivo aberto. A importância deles é que eles abstraem a complexidade do I/O, permitindo que os programas manipulem diferentes tipos de recursos da mesma maneira, usando as mesmas syscalls como read(), write() e close().
 
 **3. Discorra sobre a relação entre o tamanho do buffer e performance:**
 
-```
-[Sua análise aqui]
-```
+Essa relação é crucial, pois, como as chamadas de sistema são uma operação custosa devido à transição de contexto entre modos usuário e kernel, ler e escrever dados em blocos (buffers) maiores, reduz o número de syscalls necessárias para processar um arquivo inteiro. Isso acaba diminuindo a sobrecarga e resulta em um tempo de execução menor.
 
 ### ⚡ Comparação de Performance
 
@@ -168,13 +155,11 @@ time ./ex4_copia
 time cp dados/origem.txt dados/destino_cp.txt
 ```
 
-**Qual foi mais rápido?** _____
+**Qual foi mais rápido?** ./ex4_copia
 
 **Por que você acha que foi mais rápido?**
 
-```
-[Sua análise aqui]
-```
+O programa que executou ./ex4_copia foi mais rápido que o cp, pois o cp do sistema é uma ferramenta com muito mais funcionalidades e etapas, etapas essas necessárias para uma cópia byte a byte.
 
 ---
 
