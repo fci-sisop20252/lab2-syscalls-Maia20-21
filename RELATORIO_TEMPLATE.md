@@ -45,60 +45,48 @@ strace -e openat,read,close ./ex2_leitura
 
 **1. Qual file descriptor foi usado? Por que não começou em 0, 1 ou 2?**
 
-```
-[Sua análise aqui]
-```
+O file descriptor usado foi o 3. Ele não começou em 0, 1 ou 2 porque esses são reservados por padrão para as entradas e saídas padrões (stdin, stdout e stderr) do processo.
 
 **2. Como você sabe que o arquivo foi lido completamente?**
 
-```
-[Sua análise aqui]
-```
+A leitura foi completa porque o número de bytes lidos, 127, corresponde exatamente ao tamanho do buffer solicitado (BUFFER_SIZE - 1). Sendo assim, o programa exibiu todo o conteúdo do arquivo teste1.txt.
 
 **3. Por que verificar retorno de cada syscall?**
 
-```
-[Sua análise aqui]
-```
+É preciso verificar o retorno de cada syscall para garantir que a operação foi bem-sucedida e tratar possíveis erros. Se uma chamada como open(), read() ou close() falhar, o retorno é um valor negativo como -1, sendo possível identificar qual foi o erro usando perror().
 
 ---
 
 ## 3️⃣ Exercício 3 - Contador com Loop
 
 ### 📋 Resultados (BUFFER_SIZE = 64):
-- Linhas: _____ (esperado: 25)
-- Caracteres: _____
-- Chamadas read(): _____
-- Tempo: _____ segundos
+- Linhas: 25 (esperado: 25)
+- Caracteres: 1300
+- Chamadas read(): 21
+- Tempo: 0.000091 segundos
 
 ### 🧪 Experimentos com buffer:
 
 | Buffer Size | Chamadas read() | Tempo (s) |
 |-------------|-----------------|-----------|
-| 16          |                 |           |
-| 64          |                 |           |
-| 256         |                 |           |
-| 1024        |                 |           |
+| 16          |        82       |  0.000215 |
+| 64          |        21       |  0.000091 |
+| 256         |        6        |  0.000083 |
+| 1024        |        2        |  0.000058 |
 
 ### 🔍 Análise
 
 **1. Como o tamanho do buffer afeta o número de syscalls?**
 
-```
-[Sua análise aqui]
-```
+O tamanho do buffer afeta o número de syscalls necessárias para ler um arquivo inteiro. Como é possível ver nos resultados, quanto maior o tamanho do buffer, menor o número de chamadas.
 
 **2. Todas as chamadas read() retornaram BUFFER_SIZE bytes? Discorra brevemente sobre**
 
-```
-[Sua análise aqui]
-```
+Não, nem todas as chamadas read() retornaram o número de bytes igual ao BUFFER_SIZE solicitado. A última chamada de read antes de retornar 0 (fim do arquivo) sempre retorna uma quantidade de bytes menor que o tamanho do buffer, pois o restante do arquivo é menor que o buffer. Por exemplo, com o buffer de 16 bytes, a última leitura retornou 4 bytes, e com o buffer de 1024 bytes, a última leitura retornou 276 bytes.
 
 **3. Qual é a relação entre syscalls e performance?**
 
-```
-[Sua análise aqui]
-```
+Quanto menor o número de chamadas de sistema (syscalls), maior a performance. Como as syscalls são operações que exigem que o sistema transite do modo de usuário para o modo kernel, esse processo acaba consumindo tempo e recursos, fazendo com que o tempo de execução diminuia drasticamente à medida que o número de chamadas read() cai. Ou seja, isso demonstra que minimizar as syscalls lendo blocos de dados maiores de uma só vez, melhora o desempenho geral do programa.
 
 ---
 
