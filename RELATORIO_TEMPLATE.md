@@ -86,17 +86,17 @@ Não, nem todas as chamadas read() retornaram o número de bytes igual ao BUFFER
 
 **3. Qual é a relação entre syscalls e performance?**
 
-Quanto menor o número de chamadas de sistema (syscalls), maior a performance. Como as syscalls são operações que exigem que o sistema transite do modo de usuário para o modo kernel, esse processo acaba consumindo tempo e recursos, fazendo com que o tempo de execução diminuia drasticamente à medida que o número de chamadas read() cai. Ou seja, isso demonstra que minimizar as syscalls lendo blocos de dados maiores de uma só vez, melhora o desempenho geral do programa.
+Quanto menor o número de chamadas de sistema (syscalls), maior a performance. Como as syscalls são operações que exigem que o sistema transite do modo de usuário para o modo kernel, esse processo acaba consumindo tempo e recursos, fazendo com que o tempo de execução diminuia drasticamente à medida que o números de chamadas read() cai. Ou seja, isso demonstra que minimizar as syscalls lendo blocos de dados maiores de uma só vez, melhora o desempenho geral do programa.
 
 ---
 
 ## 4️⃣ Exercício 4 - Cópia de Arquivo
 
 ### 📈 Resultados:
-- Bytes copiados: _____
-- Operações: _____
-- Tempo: _____ segundos
-- Throughput: _____ KB/s
+- Bytes copiados: 1364
+- Operações: 6
+- Tempo: 0.000211 segundos
+- Throughput: 6312.94 KB/s
 
 ### ✅ Verificação:
 ```bash
